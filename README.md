@@ -41,8 +41,8 @@ This will create the VMs in the proper order. The VMs will be provisioned using 
 
 * **hosts.sh**: creates host file entries for each vm, so that they can resolve each other by name
 * **pe.sh**: Installs puppet enterprise on a target system. Accepts two arguments:
-	* PE_INSTALLER_NAME: The filename (no path) of the PE installer to be used when provisioning the VMs. This file must exist in the project root directory before creating VMs.
-        * ANSWER_FILE_NAME: The name of the answer file (no path) that will be used to install PE. This file must exist in the **answers** folder of this project. Suitable answer files are distributed with the project. See the [Puppet Labs automated installation documentation](https://docs.puppetlabs.com/pe/latest/install_automated.html) for more information about the answer file syntax.
+    * PE_INSTALLER_NAME: The filename (no path) of the PE installer to be used when provisioning the VMs. This file must exist in the project root directory before creating VMs.
+    * ANSWER_FILE_NAME: The name of the answer file (no path) that will be used to install PE. This file must exist in the **answers** folder of this project. Suitable answer files are distributed with the project. See the [Puppet Labs automated installation documentation](https://docs.puppetlabs.com/pe/latest/install_automated.html) for more information about the answer file syntax.
 
 ## Post-install requirements
 

@@ -28,7 +28,7 @@ This project contains a vagrant environment that defines a puppet enterprise (PE
 
 ## VM Definitions
 
-This project uses my [data-driven-vagrantfile](https://github.com/gsarjeant/data-driven-vagrantfile) to define the virtual machines in yaml format. There is extensive documentation of the vagrantfile at the data-driven-vagrantfile project wiki. Briefly, the VMs described above are defined in the vagrant.yml file distributed with this project. They should work with no modification to create the VMs and do the appropriate PE installation on each.
+This project uses my [data-driven-vagrantfile](https://github.com/gsarjeant/data-driven-vagrantfile) to define the virtual machines in yaml format. There is extensive documentation of the vagrantfile at the data-driven-vagrantfile [project wiki](https://github.com/gsarjeant/data-driven-vagrantfile/wiki). Briefly, the VMs described above are defined in the vagrant.yml file distributed with this project. They should work with no modification to create the VMs and do the appropriate PE installation on each.
 
 ## Usage
 

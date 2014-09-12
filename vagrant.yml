@@ -1,0 +1,67 @@
+boxes:
+  centos-65-x64-virtualbox: http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-nocm.box
+nodes:
+  pe-mom:
+    hostname: pe-mom.example.vm
+    box: centos-65-x64-virtualbox
+    memory: 4096
+    cpus: 1
+    networks:
+      - private_network:
+          ip: 192.168.141.100
+    provisioners:
+      - shell:
+          path: provision/hosts.sh
+      - shell:
+          path: provision/pe.sh
+          arguments:
+            - value: puppet-enterprise-3.3.1-el-6-x86_64.tar.gz
+            - value: all-in-one.answers.txt
+  pe-tenant-master:
+    hostname: pe-master.tenant.example.vm
+    box: centos-65-x64-virtualbox
+    memory: 1024
+    cpus: 1
+    networks:
+      - private_network:
+          ip: 192.168.141.101
+    provisioners:
+      - shell:
+          path: provision/hosts.sh
+      - shell:
+          path: provision/pe.sh
+          arguments:
+            - value: puppet-enterprise-3.3.1-el-6-x86_64.tar.gz
+            - value: split-master.answers.txt
+  pe-tenant-puppetdb:
+    hostname: pe-puppetdb.tenant.example.vm
+    box: centos-65-x64-virtualbox
+    memory: 2048
+    cpus: 1
+    networks:
+      - private_network:
+          ip: 192.168.141.102
+    provisioners:
+      - shell:
+          path: provision/hosts.sh
+      - shell:
+          path: provision/pe.sh
+          arguments:
+            - value: puppet-enterprise-3.3.1-el-6-x86_64.tar.gz
+            - value: split-puppetdb.answers.txt
+  pe-tenant-console:
+    hostname: pe-console.tenant.example.vm
+    box: centos-65-x64-virtualbox
+    memory: 1024
+    cpus: 1
+    networks:
+      - private_network:
+          ip: 192.168.141.103
+    provisioners:
+      - shell:
+          path: provision/hosts.sh
+      - shell:
+          path: provision/pe.sh
+          arguments:
+            - value: puppet-enterprise-3.3.1-el-6-x86_64.tar.gz
+            - value: split-console.answers.txt

@@ -34,12 +34,12 @@ q_puppet_cloud_install=n
 # String — An identifying string for this agent node. This per-node ID must be
 # unique across your entire site. Fully qualified domain names are often used
 # as agent certnames.
-q_puppetagent_certname=pe-puppetdb.tenant.example.vm
+q_puppetagent_certname=pe-puppetdb.example.vm
 
 # String — The hostname of the puppet master server. For the agent to trust the
 # master’s certificate, this must be one of the valid DNS names you chose when
 # installing the puppet master.
-q_puppetagent_server=pe-master.tenant.example.vm
+q_puppetagent_server=pe-master.example.vm
 
 # Y or N — Whether to quit the install if the puppet master cannot be reached.
 q_fail_on_unsuccessful_master_lookup=y

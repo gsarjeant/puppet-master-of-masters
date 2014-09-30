@@ -1,10 +1,10 @@
 boxes:
   centos-65-x64-virtualbox: http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-nocm.box
 nodes:
-  pe-mom:
-    hostname: pe-mom.example.vm
+  pe-mom-master:
+    hostname: pe-master.example.vm
     box: centos-65-x64-virtualbox
-    memory: 4096
+    memory: 1024
     cpus: 1
     networks:
       - private_network:
@@ -16,7 +16,39 @@ nodes:
           path: provision/pe.sh
           arguments:
             - value: puppet-enterprise-3.3.1-el-6-x86_64.tar.gz
-            - value: all-in-one.answers.txt
+            - value: split-master.answers.txt
+  pe-mom-puppetdb:
+    hostname: pe-puppetdb.example.vm
+    box: centos-65-x64-virtualbox
+    memory: 2048
+    cpus: 1
+    networks:
+      - private_network:
+          ip: 192.168.141.101
+    provisioners:
+      - shell:
+          path: provision/hosts.sh
+      - shell:
+          path: provision/pe.sh
+          arguments:
+            - value: puppet-enterprise-3.3.1-el-6-x86_64.tar.gz
+            - value: split-puppetdb.answers.txt
+  pe-mom-console:
+    hostname: pe-console.example.vm
+    box: centos-65-x64-virtualbox
+    memory: 1024
+    cpus: 1
+    networks:
+      - private_network:
+          ip: 192.168.141.102
+    provisioners:
+      - shell:
+          path: provision/hosts.sh
+      - shell:
+          path: provision/pe.sh
+          arguments:
+            - value: puppet-enterprise-3.3.1-el-6-x86_64.tar.gz
+            - value: split-console.answers.txt
   pe-tenant-master:
     hostname: pe-master.tenant.example.vm
     box: centos-65-x64-virtualbox
@@ -24,7 +56,7 @@ nodes:
     cpus: 1
     networks:
       - private_network:
-          ip: 192.168.141.101
+          ip: 192.168.141.103
     provisioners:
       - shell:
           path: provision/hosts.sh
@@ -40,7 +72,7 @@ nodes:
     cpus: 1
     networks:
       - private_network:
-          ip: 192.168.141.102
+          ip: 192.168.141.104
     provisioners:
       - shell:
           path: provision/hosts.sh
@@ -56,7 +88,7 @@ nodes:
     cpus: 1
     networks:
       - private_network:
-          ip: 192.168.141.103
+          ip: 192.168.141.105
     provisioners:
       - shell:
           path: provision/hosts.sh

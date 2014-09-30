@@ -48,16 +48,16 @@ q_all_in_one_install=n
 # String — An identifying string for the puppet master. This ID must be unique
 # across your entire site. The server’s fully qualified domain name is often
 # used as the puppet master’s certname.
-q_puppetmaster_certname=pe-master.example.vm
+q_puppetmaster_certname=pe-master.tenant.example.vm
 
 # String — Valid DNS names at which the puppet master can be reached. Must be a
 # comma-separated list. In a normal installation, defaults to
 # <hostname>,<hostname.domain>,puppet,puppet.<domain>.
-q_puppetmaster_dnsaltnames=pe-master,pe-master.example.vm
+q_puppetmaster_dnsaltnames=pe-master,pe-master.tenant.example.vm
 
 # String — The hostname of the server running the console role. Only needed if
 # you are not installing the console role on the puppet master server.
-q_puppetmaster_enterpriseconsole_hostname=pe-console.example.vm
+q_puppetmaster_enterpriseconsole_hostname=pe-console.tenant.example.vm
 
 # Integer — The port on which to contact the console server. Only needed if you
 # are not installing the console role on the puppet master server.
@@ -86,7 +86,7 @@ q_pe_check_for_updates=n
 # PuppetDB Answers
 
 # String — The hostname of the server running PuppetDB.
-q_puppetdb_hostname=pe-puppetdb.example.vm
+q_puppetdb_hostname=pe-puppetdb.tenant.example.vm
 
 # Integer — The port where the PuppetDB server can be reached.
 q_puppetdb_port=8081

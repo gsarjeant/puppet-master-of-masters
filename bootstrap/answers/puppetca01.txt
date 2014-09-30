@@ -1,0 +1,23 @@
+## The primary CA/master.  This is designated as our "source of truth"
+source $( dirname "${BASH_SOURCE[0]}" )/common.txt
+
+q_all_in_one_install=n
+q_backup_and_purge_old_configuration=n
+q_database_install=n
+q_install=y
+q_puppet_cloud_install=n
+q_puppet_enterpriseconsole_install=n
+q_puppetagent_certname=${PUPPETCA01}.${DOMAIN}
+q_puppetagent_install=y
+q_puppetagent_server=${PUPPETCA01}.${DOMAIN}
+q_puppetdb_hostname=${PUPPETDB}.${DOMAIN}
+q_puppetdb_install=n
+q_puppetdb_plaintext_port=8080
+q_puppetdb_port=8081
+q_puppetmaster_certname=${PUPPETCA01}.${DOMAIN}
+q_puppetmaster_dnsaltnames=puppet,${PUPPETCA01},${PUPPETCA01}.${DOMAIN},${PUPPETMASTER}.${DOMAIN},${PUPPETMASTER},${PUPPETCA}.${DOMAIN}
+q_puppetmaster_enterpriseconsole_hostname=${PUPPETCONSOLE}.${DOMAIN}
+q_puppetmaster_enterpriseconsole_port=443
+q_puppetmaster_install=y
+q_run_updtvpkg=n
+q_vendor_packages_install=y

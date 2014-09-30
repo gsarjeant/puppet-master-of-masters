@@ -37,12 +37,12 @@ q_puppet_cloud_install=n
 # String — An identifying string for this agent node. This per-node ID must be
 # unique across your entire site. Fully qualified domain names are often used
 # as agent certnames.
-q_puppetagent_certname=pe-console.example.vm
+q_puppetagent_certname=pe-console.tenant.example.vm
 
 # String — The hostname of the puppet master server. For the agent to trust the
 # master’s certificate, this must be one of the valid DNS names you chose when
 # installing the puppet master.
-q_puppetagent_server=pe-master.example.vm
+q_puppetagent_server=pe-master.tenant.example.vm
 
 # Y or N — Whether to quit the install if the puppet master cannot be reached.
 q_fail_on_unsuccessful_master_lookup=y
@@ -72,11 +72,11 @@ q_puppetmaster_certname=${q_puppetagent_server}
 q_pe_database=y
 
 # String — The email address the console’s admin user will use to log in.
-q_puppet_enterpriseconsole_auth_user_email=momadmin@example.com
+q_puppet_enterpriseconsole_auth_user_email=tenantadmin@example.com
 
 # String — The password for the console’s admin user. Must be longer than eight
 # characters.
-q_puppet_enterpriseconsole_auth_password=mompassword
+q_puppet_enterpriseconsole_auth_password=tenantpassword
 
 # String – The SMTP server used to email account activation codes to new
 # console users.
@@ -139,7 +139,7 @@ q_puppet_enterpriseconsole_auth_database_password=strongpassword1905
 
 # String — The hostname of the server running the PostgreSQL server that
 # supports the console.
-q_database_host=pe-puppetdb.example.vm
+q_database_host=pe-puppetdb.tenant.example.vm
 
 # Integer — The port where the PostgreSQL server that supports the console can
 # be reached.
@@ -155,7 +155,7 @@ q_puppetdb_database_password=strongpassword1748
 q_puppetdb_database_user=pe-puppetdb
 
 # String — The hostname of the server running PuppetDB.
-q_puppetdb_hostname=pe-puppetdb.example.vm
+q_puppetdb_hostname=pe-puppetdb.tenant.example.vm
 
 # Integer — The port where the PuppetDB server can be reached.
 q_puppetdb_port=8081

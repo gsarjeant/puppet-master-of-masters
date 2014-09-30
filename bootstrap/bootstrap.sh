@@ -26,13 +26,13 @@ echo
 echo "===================================================================="
 echo "Select which node to install:"
 echo
-echo "  [1] Primary CA/Master         ${PUPPETCA01}"
-echo "  [2] Primary PuppetDB/pgsql    ${PUPPETDB01}"
-echo "  [3] Primary Console/pgsql     ${PUPPETCONSOLE01}"
+echo "  [1] MoM CA/Master           ${MOM_PUPPETCA}"
+echo "  [2] MoM PuppetDB/pgsql      ${MOM_PUPPETDB}"
+echo "  [3] MoM Console             ${MOM_PUPPETCONSOLE}"
 echo
-echo "  [4] Secondary CA/Master       ${PUPPETCA02}"
-echo "  [5] Secondary PuppetDB        ${PUPPETDB02}"
-echo "  [6] Secondary Console         ${PUPPETCONSOLE02}"
+echo "  [4] Tenant Compile Master   ${TENANT_PUPPETMASTER}"
+echo "  [5] Tenant PuppetDB         ${TENANT_PUPPETDB}"
+echo "  [6] Tenant Console          ${TENANT_PUPPETCONSOLE}"
 echo
 echo "  [7] Additional Compile-only master"
 echo
@@ -133,14 +133,14 @@ function confirm_install() {
 
 case $server_role in
   #############################################################################
-  ## Primary CA
+  ## Master-of-masters CA
   #############################################################################
-  1|$PUPPETCA01)
+  1|$MOM_PUPPETCA)
     ## Primary CA
     ANSWERS="puppetca01"
     ROLE="role::puppet::ca"
 
-    confirm_install "${PUPPETCA01}"
+    confirm_install "${MOM_PUPPETCA}"
 
     if ! has_pe; then
       install_pe $ANSWERS
@@ -179,58 +179,39 @@ case $server_role in
       /opt/puppet/bin/r10k deploy environment -pv
     fi
     echo
-    echo "==> ${PUPPETCA01} complete"
+    echo "==> ${MOM_PUPPETCA} complete"
   ;;
   #############################################################################
-  ## Secondary CA
+  ## Tenant Compile master
   #############################################################################
-  4|$PUPPETCA02)
-    ## Secondary CA
-    ANSWERS="puppetca02"
-    ROLE="role::puppet::ca"
+  4|$TENANT_PUPPETMASTER)
+    ## 
+    ANSWERS="tenant.master"
+    ROLE="role::puppet::tenant::master"
 
-    confirm_install "${PUPPETCA02}"
+    confirm_install "${TENANT_PUPPETMASTER}"
 
     if ! has_pe; then
       install_pe $ANSWERS
     fi
 
     apply_puppet_role "${ROLE}"
-    echo "==> ${PUPPETCA02} complete"
+    echo "==> ${TENANT_PUPPETMASTER} complete"
 
-    echo -e "${txtylw}"
-    echo "#######################################################################"
-    echo -e "${txtrst}"
-    echo "# You will need to copy the /etc/puppetlabs/puppet/ssl directory from"
-    echo "# ${PUPPETCA01}.${DOMAIN} to the same location on this node."
-    echo "# Ensure that permissions and ownership are preserved"
-    echo "#"
-    echo "# You should do this after every other node is spun up."
-    echo "# After copied, run the following on this node:"
-    echo "#    service pe-httpd restart"
-    echo "#    rm -f /etc/puppetlabs/activemq/broker.*"
-    echo "#    puppet agent -t --server ${PUPPETCA01}.${DOMAIN}"
-    echo "#    r10k deploy environment -pv"
-    echo "#"
-    echo "# Note that this CA needs to be classified with 'role::puppet::ca'"
-    echo "# prior to doing the agent run."
-    echo -e "${txtylw}"
-    echo "#######################################################################"
-    echo -e "${txtrst}"
   ;;
   #############################################################################
   ## Primary and Secondary PuppetDB
   #############################################################################
-  2|5|$PUPPETDB01|$PUPPETDB02)
+  2|5|$MOM_PUPPETDB|$TENANT_PUPPETDB)
     case $server_role in
-      2|$PUPPETDB01)
+      2|$MOM_PUPPETDB)
         ## Primary PuppetDB server
         ANSWERS="puppetdb01"
-        NAME="${PUPPETDB01}"
+        NAME="${MOM_PUPPETDB}"
       ;;
-      5|$PUPPETDB02)
+      5|$TENANT_PUPPETDB)
         ANSWERS="puppetdb02"
-        NAME="${PUPPETDB02}"
+        NAME="${TENANT_PUPPETDB}"
       ;;
     esac
     ALT_NAMES="${NAME},${PUPPETDB}.${DOMAIN},${PUPPETDB},${PUPPETDBPG}.${DOMAIN},${PUPPETDBPG}"
@@ -274,12 +255,12 @@ case $server_role in
   #############################################################################
   ## Primary Console
   #############################################################################
-  3|$PUPPETCONSOLE01)
+  3|$MOM_PUPPETCONSOLE)
     ANSWERS="puppetconsole01"
     ROLE="role::puppet::console"
-    ALT_NAMES="${PUPPETCONSOLE01},${PUPPETCONSOLE}.${DOMAIN},${PUPPETCONSOLE},${PUPPETCONSOLEPG}.${DOMAIN},${PUPPETCONSOLEPG}"
+    ALT_NAMES="${MOM_PUPPETCONSOLE},${PUPPETCONSOLE}.${DOMAIN},${PUPPETCONSOLE},${PUPPETCONSOLEPG}.${DOMAIN},${PUPPETCONSOLEPG}"
 
-    confirm_install "${PUPPETCONSOLE01}"
+    confirm_install "${MOM_PUPPETCONSOLE}"
 
     if ! has_pe; then
       install_pe $ANSWERS
@@ -299,7 +280,7 @@ case $server_role in
     echo "==> That's okay."
     /opt/puppet/bin/puppet agent -t
 
-    ca_sign_cert "${PUPPETCONSOLE01}.${DOMAIN}"
+    ca_sign_cert "${MOM_PUPPETCONSOLE}.${DOMAIN}"
 
     ca_clean_cert "pe-internal-dashboard"
 
@@ -309,33 +290,33 @@ case $server_role in
 
     apply_puppet_role "${ROLE}"
     echo
-    echo "==> ${PUPPETCONSOLE01} complete"
+    echo "==> ${MOM_PUPPETCONSOLE} complete"
 
   ;;
   #############################################################################
   ## Secondary Console
   #############################################################################
-  6|$PUPPETCONSOLE02)
+  6|$TENANT_PUPPETCONSOLE)
     ANSWERS="puppetconsole02"
     ROLE="role::puppet::console"
-    ALT_NAMES="${PUPPETCONSOLE02},${PUPPETCONSOLE}.${DOMAIN},${PUPPETCONSOLE},${PUPPETCONSOLEPG}.${DOMAIN},${PUPPETCONSOLEPG}"
+    ALT_NAMES="${TENANT_PUPPETCONSOLE},${PUPPETCONSOLE}.${DOMAIN},${PUPPETCONSOLE},${PUPPETCONSOLEPG}.${DOMAIN},${PUPPETCONSOLEPG}"
 
-    confirm_install "${PUPPETCONSOLE02}"
+    confirm_install "${TENANT_PUPPETCONSOLE}"
 
     if [ ! -d "/opt/puppet/share/puppet-dashboard/certs" ]; then
       echo "#######################################################################"
       echo "# You must copy the /opt/puppet/share/puppet-dashboard/certs"
-      echo "# directory from ${PUPPETCONSOLE01}.${DOMAIN} to the same location on"
+      echo "# directory from ${MOM_PUPPETCONSOLE}.${DOMAIN} to the same location on"
       echo "# this node.  Ensure that permissions and ownership are preserved"
       echo "#"
       echo "# Example:"
       echo "#   On this node:"
       echo "     mkdir -p /opt/puppet/share/puppet-dashboard"
       echo "     chown uid:gid /opt/puppet/share/puppet-dashboard"
-      echo "       (where 'uid/gid' is the uid/gid of puppet-dashboard on ${PUPPETCONSOLE01})"
+      echo "       (where 'uid/gid' is the uid/gid of puppet-dashboard on ${MOM_PUPPETCONSOLE})"
       echo
       echo "     rsync -avzp -e 'ssh' \\"
-      echo "        ${PUPPETCONSOLE01}:/opt/puppet/share/puppet-dashboard/certs/ \\"
+      echo "        ${MOM_PUPPETCONSOLE}:/opt/puppet/share/puppet-dashboard/certs/ \\"
       echo "        /opt/puppet/share/puppet-dashboard/certs/"
       echo "#######################################################################"
       exit 1
@@ -357,7 +338,7 @@ case $server_role in
     echo "==> That's okay."
     /opt/puppet/bin/puppet agent -t
 
-    ca_sign_cert "${PUPPETCONSOLE02}.${DOMAIN}"
+    ca_sign_cert "${TENANT_PUPPETCONSOLE}.${DOMAIN}"
 
     echo "==> Running Puppet agent to retrieve signed certificate"
     echo "    You will see some errors here, but that should be okay."
@@ -365,7 +346,7 @@ case $server_role in
 
     apply_puppet_role "${ROLE}"
 
-    echo "==> ${PUPPETCONSOLE02} complete"
+    echo "==> ${TENANT_PUPPETCONSOLE} complete"
   ;;
   #############################################################################
   ## Additional masters
@@ -389,7 +370,7 @@ case $server_role in
     echo "==> You will see an error here indicating that the certificate"
     echo "==> contains alternate names and cannot be automatically signed."
     echo "==> That's okay."
-    /opt/puppet/bin/puppet agent -t --server ${PUPPETCA01}.${DOMAIN}
+    /opt/puppet/bin/puppet agent -t --server ${MOM_PUPPETCA}.${DOMAIN}
 
     ca_sign_cert "$(hostname -f)"
 
@@ -399,7 +380,7 @@ case $server_role in
 
     echo "==> Running Puppet agent against the primary CA to retrieve signed certificate"
     echo "    You will see some errors here, but that should be okay."
-    /opt/puppet/bin/puppet agent -t --server ${PUPPETCA01}.${DOMAIN}
+    /opt/puppet/bin/puppet agent -t --server ${MOM_PUPPETCA}.${DOMAIN}
 
     echo "==> Restarting pe-httpd restart..."
     service pe-httpd restart

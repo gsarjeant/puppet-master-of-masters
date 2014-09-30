@@ -1,6 +1,6 @@
 .vagrant
 *.swp
-*.~
+*~
 *.tar.gz
 *.rpm
 modules

@@ -2,5 +2,6 @@
 *.swp
 *~
 *.tar.gz
+*.tgz
 *.rpm
 modules

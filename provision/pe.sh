@@ -16,7 +16,8 @@ then
   exit 1
 fi
 
-ANSWERS_SRC="/vagrant/answers/${ANSWER_FILE_NAME}"
+#ANSWERS_SRC="/vagrant/answers/${ANSWER_FILE_NAME}"
+ANSWERS_SRC="/vagrant/bootstrap/answers/${ANSWER_FILE_NAME}.txt"
 ANSWERS_DEST="/root/${ANSWER_FILE_NAME}"
 
 cp $ANSWERS_SRC $ANSWERS_DEST

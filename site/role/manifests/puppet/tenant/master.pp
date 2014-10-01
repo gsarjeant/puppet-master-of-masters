@@ -1,4 +1,4 @@
-class role::puppet::tenant_master {
+class role::puppet::tenant::master {
   include profile::puppet::master
   include profile::puppet::ca
 }

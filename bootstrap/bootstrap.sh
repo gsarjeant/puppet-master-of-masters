@@ -10,6 +10,8 @@ PE_VERSION="3.3.2"
 INSTALL_PATH="pe/puppet-enterprise-${PE_VERSION}-el-6-x86_64"
 ANSWER_PATH="answers"
 
+PUPPET_DB_SSLDIR="/etc/puppetlabs/puppetdb/ssl"
+
 ################################################################################
 ## Probably don't need to modify below this
 ################################################################################
@@ -165,7 +167,7 @@ case $server_role in
 
     echo
     echo "********************************************************************"
-    echo "r10k needs to be ran to create the environments and install modules."
+    echo "r10k needs to be run to create the environments and install modules."
     echo
     echo "This is required to bootstrap the other servers!"
     echo "You can do this by executing:"
@@ -182,78 +184,15 @@ case $server_role in
     echo "==> ${MOM_PUPPETCA} complete"
   ;;
   #############################################################################
-  ## Tenant Compile master
+  ## MoM PuppetDB
   #############################################################################
-  4|$TENANT_PUPPETMASTER)
-    ## 
-    ANSWERS="tenant.master"
-    ROLE="role::puppet::tenant::master"
-
-    confirm_install "${TENANT_PUPPETMASTER}"
-
-    if ! has_pe; then
-      install_pe $ANSWERS
-    fi
-
-    apply_puppet_role "${ROLE}"
-    echo "==> ${TENANT_PUPPETMASTER} complete"
-
+  2|$MOM_PUPPETDB)
+    ## Primary PuppetDB server
+    ANSWERS="puppetdb01"
+    NAME="${MOM_PUPPETDB}"
   ;;
   #############################################################################
-  ## Primary and Secondary PuppetDB
-  #############################################################################
-  2|5|$MOM_PUPPETDB|$TENANT_PUPPETDB)
-    case $server_role in
-      2|$MOM_PUPPETDB)
-        ## Primary PuppetDB server
-        ANSWERS="puppetdb01"
-        NAME="${MOM_PUPPETDB}"
-      ;;
-      5|$TENANT_PUPPETDB)
-        ANSWERS="puppetdb02"
-        NAME="${TENANT_PUPPETDB}"
-      ;;
-    esac
-    ALT_NAMES="${NAME},${PUPPETDB}.${DOMAIN},${PUPPETDB},${PUPPETDBPG}.${DOMAIN},${PUPPETDBPG}"
-    ROLE="role::puppet::puppetdb"
-
-    confirm_install "${NAME}"
-
-    if ! has_pe; then
-      install_pe $ANSWERS
-    fi
-
-    echo "==> Setting certificate alternate names"
-    /opt/puppet/bin/augtool set '/files//puppet.conf/main/dns_alt_names' "${ALT_NAMES}"
-
-    echo "==> Removing SSL data"
-    rm -rf /etc/puppetlabs/puppet/ssl
-    rm -rf /etc/puppetlabs/puppetdb/ssl
-
-    ca_clean_cert "${NAME}.${DOMAIN}"
-
-    echo "==> Running Puppet agent to create CSR"
-    echo "==> You will see an error here indicating that the certificate"
-    echo "==> contains alternate names and cannot be automatically signed."
-    echo "==> That's okay."
-    /opt/puppet/bin/puppet agent -t
-
-    ca_sign_cert "${NAME}.${DOMAIN}"
-
-    echo "==> Running Puppet agent to retrieve signed certificate"
-    echo "    You will see some errors here, but that should be okay."
-    /opt/puppet/bin/puppet agent -t
-
-    apply_puppet_role "${ROLE}"
-
-    echo "==> Restarting the pe-puppetdb service"
-    service pe-puppetdb restart
-
-    echo
-    echo "==> ${NAME} complete"
-  ;;
-  #############################################################################
-  ## Primary Console
+  ## MoM Console
   #############################################################################
   3|$MOM_PUPPETCONSOLE)
     ANSWERS="puppetconsole01"
@@ -294,12 +233,85 @@ case $server_role in
 
   ;;
   #############################################################################
-  ## Secondary Console
+  ## Tenant Compile master
+  #############################################################################
+  4|$TENANT_PUPPETMASTER)
+    ## apply the tenant master role
+    ANSWERS="tenant.master"
+    ROLE="role::puppet::tenant::master"
+
+    confirm_install "${TENANT_PUPPETMASTER}"
+
+    if ! has_pe; then
+      install_pe $ANSWERS
+    fi
+
+    apply_puppet_role "${ROLE}"
+    echo "==> ${TENANT_PUPPETMASTER} complete"
+
+    # remove the tenant ssldir
+    PUPPET_AGENT_SSLDIR=$(puppet config print ssldir)
+    echo "==> Moving ${PUPPET_AGENT_SSLDIR}"
+    mv $PUPPET_AGENT_SSLDIR "${PUPPET_AGENT_SSLDIR}.orig"
+
+    # Do a puppet agent run against the ca server to generate a CSR
+    # (this can be signed automatically if autosigning is enabled)
+    echo "==> Regenerating SSL certificates"
+    puppet agent -t --server $(puppet config print ca_server)
+
+    echo "Please sign the certificate on the MoM and restart pe-httpd"
+    # At this point, we have to manually sign the cert and restart pe-httpd.
+    # This is because we can't autosign certs with alt names.
+  ;;
+  #############################################################################
+  ## Primary and Secondary PuppetDB
+  #############################################################################
+  5|$TENANT_PUPPETDB)
+    ANSWERS="tenant.puppetdb"
+    NAME="${TENANT_PUPPETDB}"
+
+    #ALT_NAMES="${NAME},${PUPPETDB}.${DOMAIN},${PUPPETDB},${PUPPETDBPG}.${DOMAIN},${PUPPETDBPG}"
+    ROLE="role::puppet::tenant::puppetdb"
+
+    confirm_install "${NAME}"
+
+    if ! has_pe; then
+      install_pe $ANSWERS
+    fi
+
+    #echo "==> Setting certificate alternate names"
+    #/opt/puppet/bin/augtool set '/files//puppet.conf/main/dns_alt_names' "${ALT_NAMES}"
+
+    # Apply the puppetdb role once to get everything pointing to the ca correctly
+    apply_puppet_role "${ROLE}"
+
+    # Remove the SSL data so we can generate a new cert from the global CA
+    echo "==> Removing SSL data"
+    rm -rf /etc/puppetlabs/puppet/ssl
+    rm -rf /etc/puppetlabs/puppetdb/ssl
+
+    # Regenerate CSR. Should be autosigned
+    echo "==> Running Puppet agent to create CSR"
+    /opt/puppet/bin/puppet agent -t
+
+    # Apply the puppetdb role a second time to recreate the internal certs.
+    # There will be an error here when we attempt to submit the report.
+    # It will go away when pe-puppetdb is restarted
+    apply_puppet_role "${ROLE}"
+
+    echo "==> Restarting the pe-puppetdb service"
+    service pe-puppetdb restart
+
+    echo
+    echo "==> ${NAME} complete"
+  ;;
+  #############################################################################
+  ## Tenant Console
   #############################################################################
   6|$TENANT_PUPPETCONSOLE)
-    ANSWERS="puppetconsole02"
-    ROLE="role::puppet::console"
-    ALT_NAMES="${TENANT_PUPPETCONSOLE},${PUPPETCONSOLE}.${DOMAIN},${PUPPETCONSOLE},${PUPPETCONSOLEPG}.${DOMAIN},${PUPPETCONSOLEPG}"
+    ANSWERS="tenant.console"
+    ROLE="role::puppet::tenant::console"
+    #ALT_NAMES="${TENANT_PUPPETCONSOLE},${PUPPETCONSOLE}.${DOMAIN},${PUPPETCONSOLE},${PUPPETCONSOLEPG}.${DOMAIN},${PUPPETCONSOLEPG}"
 
     confirm_install "${TENANT_PUPPETCONSOLE}"
 
@@ -326,25 +338,26 @@ case $server_role in
       install_pe $ANSWERS
     fi
 
-    echo "==> Setting certificate alternate names"
-    /opt/puppet/bin/augtool set '/files//puppet.conf/main/dns_alt_names' "${ALT_NAMES}"
+    apply_puppet_role "${ROLE}"
+    #echo "==> Setting certificate alternate names"
+    #/opt/puppet/bin/augtool set '/files//puppet.conf/main/dns_alt_names' "${ALT_NAMES}"
 
     echo "==> Removing SSL data"
     rm -rf /etc/puppetlabs/puppet/ssl
 
-    echo "==> Running Puppet agent to create CSR"
+    echo "==> Running Puppet agent against CA to create CSR"
     echo "==> You will see an error here indicating that the certificate"
     echo "==> contains alternate names and cannot be automatically signed."
     echo "==> That's okay."
-    /opt/puppet/bin/puppet agent -t
+    /opt/puppet/bin/puppet agent -t --server $(puppet config print ca_server)
 
-    ca_sign_cert "${TENANT_PUPPETCONSOLE}.${DOMAIN}"
+    #ca_sign_cert "${TENANT_PUPPETCONSOLE}.${DOMAIN}"
 
-    echo "==> Running Puppet agent to retrieve signed certificate"
-    echo "    You will see some errors here, but that should be okay."
-    /opt/puppet/bin/puppet agent -t
+    #echo "==> Running Puppet agent to retrieve signed certificate"
+    #echo "    You will see some errors here, but that should be okay."
+    #/opt/puppet/bin/puppet agent -t
 
-    apply_puppet_role "${ROLE}"
+    #apply_puppet_role "${ROLE}"
 
     echo "==> ${TENANT_PUPPETCONSOLE} complete"
   ;;

@@ -11,7 +11,7 @@
 ##   mod 'puppetlabs/apache', :latest
 
 mod 'pe_server',
-  :git => 'https://github.com/gsarjeant/pe_server.git',
+  :git => 'https://github.com/joshbeard/pe_server.git',
   :ref => 'move_console_conf'
 
 mod 'puppet_certificate',

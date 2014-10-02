@@ -10,7 +10,7 @@ PE_VERSION="3.3.2"
 INSTALL_PATH="pe/puppet-enterprise-${PE_VERSION}-el-6-x86_64"
 ANSWER_PATH="answers"
 
-PUPPET_DB_SSLDIR="/etc/puppetlabs/puppetdb/ssl"
+#PUPPET_DB_SSLDIR="/etc/puppetlabs/puppetdb/ssl"
 
 ################################################################################
 ## Probably don't need to modify below this
@@ -35,8 +35,6 @@ echo
 echo "  [4] Tenant Compile Master   ${TENANT_PUPPETMASTER}"
 echo "  [5] Tenant PuppetDB         ${TENANT_PUPPETDB}"
 echo "  [6] Tenant Console          ${TENANT_PUPPETCONSOLE}"
-echo
-echo "  [7] Additional Compile-only master"
 echo
 read -p "Selection: " server_role
 
@@ -339,82 +337,17 @@ case $server_role in
     fi
 
     apply_puppet_role "${ROLE}"
-    #echo "==> Setting certificate alternate names"
-    #/opt/puppet/bin/augtool set '/files//puppet.conf/main/dns_alt_names' "${ALT_NAMES}"
 
     echo "==> Removing SSL data"
     rm -rf /etc/puppetlabs/puppet/ssl
 
     echo "==> Running Puppet agent against CA to create CSR"
-    echo "==> You will see an error here indicating that the certificate"
-    echo "==> contains alternate names and cannot be automatically signed."
-    echo "==> That's okay."
+    echo "==> The CSR will be autosigned by the CA."
     /opt/puppet/bin/puppet agent -t --server $(puppet config print ca_server)
-
-    #ca_sign_cert "${TENANT_PUPPETCONSOLE}.${DOMAIN}"
-
-    #echo "==> Running Puppet agent to retrieve signed certificate"
-    #echo "    You will see some errors here, but that should be okay."
-    #/opt/puppet/bin/puppet agent -t
 
     #apply_puppet_role "${ROLE}"
 
     echo "==> ${TENANT_PUPPETCONSOLE} complete"
-  ;;
-  #############################################################################
-  ## Additional masters
-  #############################################################################
-  7)
-    ANSWERS="master"
-    ROLE="role::puppet::master"
-
-    confirm_install "additional master ($(hostname -f))"
-
-    if ! has_pe; then
-      install_pe $ANSWERS
-    fi
-
-    apply_puppet_role "${ROLE}"
-
-    echo "==> Removing SSL data"
-    rm -rf /etc/puppetlabs/puppet/ssl
-
-    echo "==> Running Puppet agent against the CA to create CSR"
-    echo "==> You will see an error here indicating that the certificate"
-    echo "==> contains alternate names and cannot be automatically signed."
-    echo "==> That's okay."
-    /opt/puppet/bin/puppet agent -t --server ${MOM_PUPPETCA}.${DOMAIN}
-
-    ca_sign_cert "$(hostname -f)"
-
-    echo "==> Removing stale ActiveMQ broker keystores"
-    rm -f /etc/puppetlabs/activemq/broker.ks
-    rm -f /etc/puppetlabs/activemq/broker.ts
-
-    echo "==> Running Puppet agent against the primary CA to retrieve signed certificate"
-    echo "    You will see some errors here, but that should be okay."
-    /opt/puppet/bin/puppet agent -t --server ${MOM_PUPPETCA}.${DOMAIN}
-
-    echo "==> Restarting pe-httpd restart..."
-    service pe-httpd restart
-
-    echo "==> Running puppet agent against myself"
-    /opt/puppet/bin/puppet agent -t
-
-    echo "********************************************************************"
-    echo "You'll need to add this master's certname to the list of PuppetDB and"
-    echo "Console authorizations.  Refer to the documentation for steps on this."
-    echo "Hint: This should be added to the profile module's params class."
-    echo
-    echo "r10k needs to be ran to create the environments and install modules."
-    echo "You can do this by executing:"
-    echo "   r10k deploy environment -pv"
-    echo
-    read -p "=> Should we run r10k now? [y/n] " run_r10k
-    if [ "${run_r10k}" == "y" ]; then
-      /opt/puppet/bin/r10k deploy environment -pv
-    fi
-    echo "==> $(hostname -f) complete"
   ;;
   *)
     echo "Unknown selection: ${server_role}"

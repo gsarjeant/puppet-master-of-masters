@@ -12,7 +12,6 @@
 
 mod 'pe_server',
   :git => 'https://github.com/joshbeard/pe_server.git',
-  :ref => 'move_console_conf'
 
 mod 'puppet_certificate',
   :git => 'https://github.com/reidmv/puppet-module-puppet_certificate.git',

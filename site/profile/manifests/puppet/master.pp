@@ -14,6 +14,19 @@ class profile::puppet::master {
     export_puppetdb_whitelist    => false,
   }
 
+  # We'll need to manage the console's internal certs from here. Make sure the directories exist.
+  file { $::profile::params::console_share_dir:
+    ensure => directory,
+    owner => $::profile::params::pe_master_owner,
+    group => $::profile::params::pe_master_group,
+    mode  => '0755',
+  }
+
+  file { $::profile::params::console_internal_cert_dir:
+    ensure => directory,
+    owner => $::profile::params::pe_master_owner,
+    group => $::profile::params::pe_master_group,
+  }
 
   ## Configure Mcollective - we want to share credentials and provide multiple
   ## brokers

@@ -14,21 +14,11 @@ class profile::puppet::console::internal_certs(
   $console_cert_owner = 'puppet-dashboard',
   $console_cert_group = 'puppet-dashboard',
 ){
-  $console_share_dir = '/opt/puppet/share/puppet-dashboard'
-  $console_internal_cert_dir = "${console_share_dir}/certs"
 
   File {
     owner => $console_cert_owner,
     group => $console_cert_group,
     mode  => '0755',
-  }
-
-  file { $console_share_dir:
-    ensure => directory,
-  }
-
-  file { $console_internal_cert_dir:
-    ensure => directory,
   }
 
   file { "${console_internal_cert_dir}/pe-internal-dashboard.ca_cert.pem":

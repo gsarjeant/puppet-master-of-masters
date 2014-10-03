@@ -16,7 +16,7 @@ class profile::params {
   ]
 
   $pe_console_share_dir               = '/opt/puppet/share/puppet-dashboard'
-  $pe_console_internal_cert_dir       = "${console_share_dir}/certs"
+  $pe_console_internal_cert_dir       = "${pe_console_share_dir}/certs"
   
   $pe_master_owner                    = 'pe-puppet'
   $pe_master_group                    = 'pe-puppet'

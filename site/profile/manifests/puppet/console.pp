@@ -34,7 +34,7 @@ class profile::puppet::console {
     ca_server                      => $profile::params::pe_mom_ca_fqdn,
     inventory_server               => $profile::params::pe_tenant_master_fqdn,
     console_cert_name              => $profile::params::pe_console_certname,
-    puppetdb_host                  => $profile::params::pe_tenant_puppetdb_hostname,
+    puppetdb_host                  => $profile::params::pe_tenant_puppetdb_fqdn,
     console_certs_from_ca          => false,
     create_console_certs           => false,
     collect_exported_authorization => false,

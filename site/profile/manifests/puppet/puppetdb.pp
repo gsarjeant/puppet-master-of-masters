@@ -12,7 +12,7 @@ class profile::puppet::puppetdb {
   }
 
   class { 'pe_server::puppetdb':
-    postgres_database_host     => $profile::params::pe_tenant_puppetdbpg_fqdn,
+    manage_postgres => false,
   }
 
   ## Explicitly define whitelisted certificates

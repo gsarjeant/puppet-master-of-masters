@@ -40,16 +40,16 @@ class profile::puppet::console::internal_certs(
     content => file("${console_internal_cert_dir}/pe-internal-dashboard.private_key.pem"),
     mode    => '0440',
   }
-  file { "${console_internal_cert_dir}/pe-internal-dashboard.ca_cert.pem":
+  file { "${console_internal_cert_dir}/pe-internal-dashboard.ca_crl.pem":
     ensure  => file,
-    content => file("${console_internal_cert_dir}/pe-internal-dashboard.ca_cert.pem"),
+    content => file("${console_internal_cert_dir}/pe-internal-dashboard.ca_crl.pem"),
   }
-  file { "${console_internal_cert_dir}/pe-internal-dashboard.ca_cert.pem":
+  file { "${console_internal_cert_dir}/pe-internal-dashboard.public_key.pem":
     ensure  => file,
-    content => file("${console_internal_cert_dir}/pe-internal-dashboard.ca_cert.pem"),
+    content => file("${console_internal_cert_dir}/pe-internal-dashboard.public_key.pem"),
   }
-  file { "${console_internal_cert_dir}/pe-internal-dashboard.ca_cert.pem":
+  file { "${console_internal_cert_dir}/pe-internal-dashboard.cert.pem":
     ensure  => file,
-    content => file("${console_internal_cert_dir}/pe-internal-dashboard.ca_cert.pem"),
+    content => file("${console_internal_cert_dir}/pe-internal-dashboard.cert.pem"),
   }
 }

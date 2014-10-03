@@ -15,31 +15,33 @@ class profile::puppet::console::internal_certs(
   $console_cert_group = 'puppet-dashboard',
 ){
 
+  include profile::params
+
   File {
     owner => $console_cert_owner,
     group => $console_cert_group,
     mode  => '0755',
   }
 
-  file { "${console_internal_cert_dir}/pe-internal-dashboard.ca_cert.pem":
+  file { "${::profile::params::pe_console_internal_cert_dir}/pe-internal-dashboard.ca_cert.pem":
     ensure  => file,
-    content => file("${console_internal_cert_dir}/pe-internal-dashboard.ca_cert.pem"),
+    content => file("${::profile::params::pe_console_internal_cert_dir}/pe-internal-dashboard.ca_cert.pem"),
   }
-  file { "${console_internal_cert_dir}/pe-internal-dashboard.private_key.pem":
+  file { "${::profile::params::pe_console_internal_cert_dir}/pe-internal-dashboard.private_key.pem":
     ensure  => file,
-    content => file("${console_internal_cert_dir}/pe-internal-dashboard.private_key.pem"),
+    content => file("${::profile::params::pe_console_internal_cert_dir}/pe-internal-dashboard.private_key.pem"),
     mode    => '0440',
   }
-  file { "${console_internal_cert_dir}/pe-internal-dashboard.ca_crl.pem":
+  file { "${::profile::params::pe_console_internal_cert_dir}/pe-internal-dashboard.ca_crl.pem":
     ensure  => file,
-    content => file("${console_internal_cert_dir}/pe-internal-dashboard.ca_crl.pem"),
+    content => file("${::profile::params::pe_console_internal_cert_dir}/pe-internal-dashboard.ca_crl.pem"),
   }
-  file { "${console_internal_cert_dir}/pe-internal-dashboard.public_key.pem":
+  file { "${::profile::params::pe_console_internal_cert_dir}/pe-internal-dashboard.public_key.pem":
     ensure  => file,
-    content => file("${console_internal_cert_dir}/pe-internal-dashboard.public_key.pem"),
+    content => file("${::profile::params::pe_console_internal_cert_dir}/pe-internal-dashboard.public_key.pem"),
   }
-  file { "${console_internal_cert_dir}/pe-internal-dashboard.cert.pem":
+  file { "${::profile::params::pe_console_internal_cert_dir}/pe-internal-dashboard.cert.pem":
     ensure  => file,
-    content => file("${console_internal_cert_dir}/pe-internal-dashboard.cert.pem"),
+    content => file("${::profile::params::pe_console_internal_cert_dir}/pe-internal-dashboard.cert.pem"),
   }
 }

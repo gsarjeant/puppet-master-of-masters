@@ -15,14 +15,14 @@ class profile::puppet::master {
   }
 
   # We'll need to manage the console's internal certs from here. Make sure the directories exist.
-  file { $::profile::params::console_share_dir:
+  file { $::profile::params::pe_console_share_dir:
     ensure => directory,
     owner => $::profile::params::pe_master_owner,
     group => $::profile::params::pe_master_group,
     mode  => '0755',
   }
 
-  file { $::profile::params::console_internal_cert_dir:
+  file { $::profile::params::pe_console_internal_cert_dir:
     ensure => directory,
     owner => $::profile::params::pe_master_owner,
     group => $::profile::params::pe_master_group,

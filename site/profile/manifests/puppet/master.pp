@@ -52,6 +52,14 @@ class profile::puppet::master {
     group  => 'root',
   }
 
+  ## Create the external node classifier script
+  file { "${::settings::confdir}/external_nodes.rb":
+    ensure => 'file',
+    owner  => 'pe-puppet',
+    group  => 'pe-puppet',
+    mode   => '0750',
+  }
+
   ## Configure Puppet's base module path - where can it find 'global' modules
   ini_setting { 'basemodulepath':
     ensure  => 'present',

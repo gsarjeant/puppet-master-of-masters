@@ -7,13 +7,19 @@
 #
 # NOTE: The internal certs must be manually copied from the MoM console to
 #       /opt/puppet/share/puppet-dashboard/certs for a split MoM installation.
-class profile::puppet::console::internal_certs(){
+# NOTE: We don't generally encourage parameters in profiles, but I can't think
+#       of a better way to handle the fact that these certs need to be owned by
+#       different users on different nodes.
+class profile::puppet::console::internal_certs(
+  $console_cert_owner = 'puppet-dashboard',
+  $console_cert_group = 'puppet-dashboard',
+){
   $console_share_dir = '/opt/puppet/share/puppet-dashboard'
   $console_internal_cert_dir = "${console_share_dir}/certs"
 
   File {
-    owner => 'puppet-dashboard',
-    group => 'puppet-dashboard',
+    owner => $console_cert_owner,
+    group => $console_cert_group,
     mode  => '0755',
   }
 

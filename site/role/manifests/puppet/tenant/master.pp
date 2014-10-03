@@ -1,5 +1,5 @@
 class role::puppet::tenant::master {
   include profile::puppet::master
   include profile::puppet::ca
-  include profile::puppet::tenant::console::internal_certs
+  include profile::puppet::console::internal_certs
 }

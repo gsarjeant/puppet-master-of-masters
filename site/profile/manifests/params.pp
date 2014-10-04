@@ -15,6 +15,10 @@ class profile::params {
     "pe-master.${pe_tenant_domain}",
   ]
 
+  $pe_master_ssl_dir                  = '/etc/puppetlabs/puppet/ssl'
+  $pe_master_ssl_cert_dir             = "${pe_master_ssl_dir}/certs"
+  $pe_master_ssl_public_key_dir       = "${pe_master_ssl_dir}/public_keys"
+  $pe_master_ssl_private_key_dir      = "${pe_master_ssl_dir}/private_keys"
   $pe_console_share_dir               = '/opt/puppet/share/puppet-dashboard'
   $pe_console_internal_cert_dir       = "${pe_console_share_dir}/certs"
   

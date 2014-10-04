@@ -20,7 +20,7 @@ class profile::puppet::console::internal_certs(
   File {
     owner => $console_cert_owner,
     group => $console_cert_group,
-    mode  => '0755',
+    mode  => '0644',
   }
 
   file { "${::profile::params::pe_console_internal_cert_dir}/pe-internal-dashboard.ca_cert.pem":

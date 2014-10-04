@@ -1,6 +1,5 @@
 class role::puppet::tenant::master {
   include profile::puppet::master
-  include profile::puppet::master::internal_certs
   include profile::puppet::ca
 
   # Copy the pe-internal console certs to the tenant master so that it can manage them for the tenant console

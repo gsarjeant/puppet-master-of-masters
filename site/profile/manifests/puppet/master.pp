@@ -28,8 +28,8 @@ class profile::puppet::master {
     group => $::profile::params::pe_master_group,
   }
 
-  ## Configure Mcollective - we want to share credentials and provide multiple
-  ## brokers
+  ## Configure Mcollective 
+  ## we want to share credentials and provide multiple brokers
   class { 'pe_server::mcollective':
     primary            => $profile::params::pe_mom_ca_fqdn,
     shared_credentials => true,

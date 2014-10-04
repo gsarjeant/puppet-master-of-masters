@@ -47,6 +47,13 @@ class profile::puppet::master {
     path   => "${::settings::confdir}/manifests/site.pp",
   }
 
+  ## Include the class defined by the server_role fact in site.pp
+  file_line { 'site_include_server_role':
+    ensure => 'present',
+    line   => 'include $::server_role',
+    path   => "${::settings::confdir}/manifests/site.pp",
+  }
+
   ## Configure r10k
   class { 'r10k':
     sources       => {

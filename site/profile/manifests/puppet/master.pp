@@ -3,6 +3,12 @@ class profile::puppet::master {
   ## Global variables for PE configuration
   include profile::params
 
+  ## File ownership defaults
+  File {
+    owner => $::profile::params::pe_master_owner,
+    group => $::profile::params::pe_master_group,
+  }
+
   ## Mcollective servers
   $stomp_servers = join($profile::params::pe_tenant_stomp_servers, ',')
 
@@ -17,8 +23,6 @@ class profile::puppet::master {
   # We'll need to manage the console's internal certs from here. Make sure the directories exist.
   file { $::profile::params::pe_console_share_dir:
     ensure => directory,
-    owner => $::profile::params::pe_master_owner,
-    group => $::profile::params::pe_master_group,
     mode  => '0755',
   }
 
@@ -46,7 +50,7 @@ class profile::puppet::master {
   ## Configure r10k
   class { 'r10k':
     sources       => {
-      'control'   => {
+      'infra'   => {
         'remote'  => $profile::params::control_repo_address,
         'basedir' => "${::settings::confdir}/environments",
         'prefix'  => false,

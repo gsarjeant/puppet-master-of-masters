@@ -8,8 +8,8 @@ class profile::puppet::master::internal_certs{
   include profile::params
 
   File {
-    owner => $profile::params::pe-master-owner,
-    group => $profile::params::pe-master-group,
+    owner => $profile::params::pe_master_owner,
+    group => $profile::params::pe_master_group,
     mode  => 0644
   }
 

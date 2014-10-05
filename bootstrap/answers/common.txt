@@ -7,7 +7,7 @@
 # several individual files.
 ###############################################################################
 ## The domain name to use for the hosts' fqdn
-DOMAIN="vagrant.vm"
+DOMAIN="example.vm"
 
 ## The generic name that points to active Puppet Master(s)
 PUPPETMASTER="puppetmaster"

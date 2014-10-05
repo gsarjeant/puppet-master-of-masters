@@ -76,7 +76,7 @@ function install_pe() {
   fi
 
   if [ ! -f "${ANSWER_PATH}/${PUPPET_ROLE_ANSWERS}.txt" ]; then
-    echo "Failure: Answer file not found: ${ANSWER_PATH}/${PUPPET_ROLEANSWERS}.txt"
+    echo "Failure: Answer file not found: ${ANSWER_PATH}/${PUPPET_ROLE_ANSWERS}.txt"
     exit 1
   fi
 

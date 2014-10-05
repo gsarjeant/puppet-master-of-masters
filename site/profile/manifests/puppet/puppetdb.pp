@@ -12,7 +12,7 @@ class profile::puppet::puppetdb {
   }
 
   class { 'pe_server::puppetdb':
-    manage_postgres => false,
+    manage_postgres => true,
   }
 
   ## Explicitly define whitelisted certificates

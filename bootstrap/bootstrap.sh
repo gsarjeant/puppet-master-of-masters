@@ -2,10 +2,12 @@
 ###############################################################################
 # Puppet Enterprise Installer Wrapper
 #
-# This wraps the PE installer to make for a more automated split custom split
+# This wraps the PE installer to make for a more automated custom split
 # installation.
 ###############################################################################
 
+# lib/bootstrap-functions.sh defines all of the functions invoked below,
+# and any other functions upon which they rely.
 source lib/bootstrap-functions.sh
 ## This file includes the hostnames that we need.
 ## Probably won't use this in my config, but leaving the line here for a bit.
@@ -21,6 +23,7 @@ _script_dir=$PWD
 validate_root
 
 # Ask the user for the server role if it wasn't specified on the command line
+# TODO: Allow the user to specify the role on the command line.
 prompt_for_server_role
 echo "You selected role ${SERVER_ROLE}"
 
@@ -30,6 +33,7 @@ echo "Role name: ${ROLE_NAME}"
 echo "Role answers: ${ROLE_ANSWERS}"
 
 # Confirm the selected role
+# TODO: Only confirm if run interactively
 confirm_install
 
 # Install PE if necessary

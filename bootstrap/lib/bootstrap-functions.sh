@@ -225,19 +225,6 @@ function confirm_install() {
   fi
 }
 
-function ca_clean_cert() {
-  echo -e "${txtylw}"
-  echo "#=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+="
-  echo -e "${txtrst}"
-  echo "# You now need to clean the certificate for ${1} on the CA"
-  echo "    puppet cert clean ${1}"
-  echo
-  read -p "# Press 'y' when the certificate has been cleaned: " cert_clean
-  while [ "${cert_clean}" != "y" ]; do
-    ca_clean_cert $1
-  done
-}
-
 function ca_sign_cert() {
   echo -e "${txtylw}"
   echo "#=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+="

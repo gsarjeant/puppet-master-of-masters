@@ -45,7 +45,7 @@ class profile::puppet::master {
   ## Set the stomp servers as a top-scope variable in site.pp
   file { "${::settings::confdir}/manifests/site.pp":
     ensure => 'present',
-    source => 'puppet:///modules/profile/etc/puppetlabs/puppet/manifests/site.pp,
+    source => 'puppet:///modules/profile/etc/puppetlabs/puppet/manifests/site.pp',
     notify => Service[ 'pe-httpd' ],
   }
 

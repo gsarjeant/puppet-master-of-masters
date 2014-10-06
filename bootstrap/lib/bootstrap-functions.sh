@@ -6,7 +6,8 @@
 
 PE_VERSION='3.3.1'
 PE_BIN_DIR='/opt/puppet/bin'
-INSTALL_PATH='pe/puppet-enterprise-${PE_VERSION}-el-6-x86_64'
+# NOTE: This will be created by the PE installer rpm
+PE_INSTALLER_PATH='/apps/pe-installer/puppet-enterprise-${PE_VERSION}-el-6-x86_64'
 ANSWER_PATH='answers'
 GIT_INSTALL_DIR='/usr/example/bin'
 CONTROL_REPO_NAME='puppet-master-of-masters'
@@ -92,6 +93,11 @@ function set_role_params(){
       PUPPET_ROLE_NAME='role::puppet::tenant::console'
       PUPPET_ROLE_ANSWERS='tenant.master'
       ;;
+    *)
+      # Default: unknown role - exit
+      echo "ERROR: Unknown role specified. Exiting."
+      exit 1
+      ;;
   esac
 }
 
@@ -107,7 +113,7 @@ function install_pe() {
   fi
 
   "${INSTALL_PATH}/puppet-enterprise-installer" \
-    -A "${ANSWER_PATH}/${PUPPET_ROLE_ANSWERS}.txt" \
+    -a "${ANSWER_PATH}/${PUPPET_ROLE_ANSWERS}.txt" \
     -l "/tmp/pe_install.$(hostname -f).$(date +%Y-%m-%d_%H-%M).log"
 
   if [ $? -eq 0 ]; then
@@ -177,19 +183,24 @@ function install_r10k(){
   fi
 }
 
-# TODO: Get cwd and return to that
 function install_control_repo_dependencies(){
+  ORIGINAL_DIR=$PWD
   # CD into the control repo directory and run r10k puppetfile install
   cd $CONTROL_REPO_DIR
   echo "==> Installing control repo dependencies from Puppetfile using r10k"
   "${PE_BIN_DIR}/r10k" puppetfile install -v
-  cd /root
+  cd $ORIGINAL_DIR
 }
 
 function clean_up_local_repo(){
   echo "==> Deleting local clone of infrastructure control repo"
   echo $CONTROL_REPO_DIR
-  rm -rf $CONTROL_REPO_DIR
+  if [ $CONTROL_REPO_DIR == '' || $CONTROL_REPO_DIR == '/' ]
+  then
+    echo "Control repo dir not set - bail!"
+  else 
+    rm -rf $CONTROL_REPO_DIR
+  fi
 }
 
 ############################################################################
@@ -215,6 +226,10 @@ function configure_puppet_server(){
       ;;
     6)
       configure_tenant_console
+      ;;
+    *)
+      echo "Unknown role specified: ${SERVER_ROLE} - exiting"
+      exit 1
       ;;
   esac
 }
@@ -257,8 +272,13 @@ function configure_tenant_master(){
 
   # remove the tenant ssldir
   PUPPET_AGENT_SSLDIR=$(puppet config print ssldir)
-  echo "==> Moving ${PUPPET_AGENT_SSLDIR}"
-  mv $PUPPET_AGENT_SSLDIR "${PUPPET_AGENT_SSLDIR}.orig"
+  echo "==> Removing ${PUPPET_AGENT_SSLDIR}"
+  if [ $PUPPET_AGENT_SSLDIR == '' || $PUPPET_AGENT_SSLDIR == '/' ]
+  then
+    echo "Puppet Agent SSL dir not set - bail!"
+  else 
+    rm -rf $PUPPET_AGENT_SSLDIR
+  fi
 
   # Do a puppet agent run against the ca server to generate a CSR
   echo "==> Regenerating SSL certificates"

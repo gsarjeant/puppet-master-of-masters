@@ -186,7 +186,8 @@ function install_control_repo_dependencies(){
 
 function clean_up_local_repo(){
   echo "==> Deleting local clone of infrastructure control repo"
-  rm -rf ${CONTROL_REPO_DIR}
+  echo $CONTROL_REPO_DIR
+  rm -rf $CONTROL_REPO_DIR
 }
 
 ############################################################################

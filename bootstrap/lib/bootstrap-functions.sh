@@ -243,9 +243,9 @@ function configure_mom_master(){
   # And configure the environment directories
   /opt/puppet/bin/r10k deploy environment -p -v
 
-#  # Restart the pe-httpd process
-#  echo "==> Restarting pe-httpd to read new configs and certs."
-#  service pe-httpd restart
+  # Restart the pe-httpd process
+  echo "==> Restarting pe-httpd to read new configs and certs."
+  service pe-httpd restart
 
   echo
   echo "==> Reconfiguration of MoM master complete"

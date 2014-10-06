@@ -177,11 +177,13 @@ function install_r10k(){
   fi
 }
 
+# TODO: Get cwd and return to that
 function install_control_repo_dependencies(){
   # CD into the control repo directory and run r10k puppetfile install
   cd $CONTROL_REPO_DIR
   echo "==> Installing control repo dependencies from Puppetfile using r10k"
   "${PE_BIN_DIR}/r10k" puppetfile install -v
+  cd /root
 }
 
 function clean_up_local_repo(){
@@ -241,9 +243,9 @@ function configure_mom_master(){
   # And configure the environment directories
   /opt/puppet/bin/r10k deploy environment -p -v
 
-#  # Restart the pe-httpd process
-#  echo "==> Restarting pe-httpd to read new configs and certs."
-#  service pe-httpd restart
+  # Restart the pe-httpd process
+  echo "==> Restarting pe-httpd to read new configs and certs."
+  service pe-httpd restart
 
   echo
   echo "==> Reconfiguration of MoM master complete"

@@ -141,7 +141,6 @@ function apply_puppet_role() {
 
 function apply_puppet_role_local() {
   echo "==> Applying Puppet role of ${PUPPET_ROLE_NAME}"
-  echo "==> CR dir: ${CONTROL_REPO_DIR}"
 
   /opt/puppet/bin/puppet apply -e "include ${PUPPET_ROLE_NAME}" \
     --modulepath=${CONTROL_REPO_DIR}/site:${CONTROL_REPO_DIR}/modules:/opt/puppet/share/puppet/modules
@@ -151,11 +150,13 @@ function install_git(){
   # Make sure git isn't already installed
   if [ ! -f "${GIT_INSTALL_DIR}/git" ]
   then
+    echo "==> git not found: installing git"
     yum install git
   fi
 }
 
 function clone_infrastructure_control_repo(){
+  echo "==> Cloning ${CONTROL_REPO_URL} into ${CONTROL_REPO_ROOT}"
   mkdir -p $CONTROL_REPO_ROOT
   cd $CONTROL_REPO_ROOT
 
@@ -179,8 +180,13 @@ function install_r10k(){
 function install_control_repo_dependencies(){
   # CD into the control repo directory and run r10k puppetfile install
   cd $CONTROL_REPO_DIR
-    echo "==> Installing control repo dependencies from Puppetfile using r10k"
+  echo "==> Installing control repo dependencies from Puppetfile using r10k"
   "${PE_BIN_DIR}/r10k" puppetfile install -v
+}
+
+function clean_up_local_repo(){
+  echo "==> Deleting local clone of infrastructure control repo"
+  rm -rf ${CONTROL_REPO_DIR}
 }
 
 ############################################################################
@@ -227,6 +233,9 @@ function configure_mom_master(){
   apply_puppet_role_local
   echo "==> Applied role ${PUPPET_ROLE_NAME}"
 
+  # Clean up the local clone of the infrasturcture control repo.
+  clean_up_local_repo
+
   # Run r10k on the MoM master to pull down the correct control repos
   # And configure the environment directories
   /opt/puppet/bin/r10k deploy environment -p -v
@@ -235,8 +244,8 @@ function configure_mom_master(){
 #  echo "==> Restarting pe-httpd to read new configs and certs."
 #  service pe-httpd restart
 
-#  echo
-#  echo "==> Reconfiguration of MoM master complete"
+  echo
+  echo "==> Reconfiguration of MoM master complete"
 }
 
 function configure_tenant_master(){

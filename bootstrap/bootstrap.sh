@@ -29,8 +29,8 @@ echo "You selected role ${SERVER_ROLE}"
 
 # Set the role name and answer file for the selected role
 set_role_params
-echo "Role name: ${ROLE_NAME}"
-echo "Role answers: ${ROLE_ANSWERS}"
+echo "Role name: ${PUPPET_ROLE_NAME}"
+echo "Role answers: ${PUPPET_ROLE_ANSWERS}"
 
 # Confirm the selected role
 # TODO: Only confirm if run interactively

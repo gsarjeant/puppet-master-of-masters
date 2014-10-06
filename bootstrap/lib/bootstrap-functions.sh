@@ -4,10 +4,18 @@
 # CONSTANTS
 ############################################################################
 
-PE_VERSION="3.3.1"
-INSTALL_PATH="pe/puppet-enterprise-${PE_VERSION}-el-6-x86_64"
-ANSWER_PATH="answers"
-CONTROL_REPO_URL='https://github.com/gsarjeant/puppet-master-of-masters.git'
+PE_VERSION='3.3.1'
+PE_BIN_DIR='/opt/puppet/bin'
+INSTALL_PATH='pe/puppet-enterprise-${PE_VERSION}-el-6-x86_64'
+ANSWER_PATH='answers'
+GIT_INSTALL_DIR='/usr/example/bin'
+CONTROL_REPO_NAME='puppet-master-of-masters'
+CONTROL_REPO_URL="https://github.com/gsarjeant/${CONTROL_REPO_NAME}.git"
+
+INSTALL_BASE_DIR='/apps'
+CONTROL_REPO_SUBDIR='control_repo'
+CONTROL_REPO_ROOT="${INSTALL_BASE_DIR}/${CONTROL_REPO_SUBDIR}"
+CONTROL_REPO_DIR="${CONTROL_REPO_ROOT}/${CONTROL_REPO_NAME}"
 
 # Text colors
 txtred="\033[0;31m" # Red
@@ -48,6 +56,24 @@ function prompt_for_server_role(){
 
 function set_role_params(){
   case $SERVER_ROLE in
+    1)
+      # MoM puppet master
+      SERVER_ROLE_NAME='MoM Puppet Master'
+      PUPPET_ROLE_NAME='role::puppet::master'
+      PUPPET_ROLE_ANSWERS='mom.master'
+      ;;
+    2)
+      # MoM puppetdb
+      SERVER_ROLE_NAME='MoM PuppetDB'
+      PUPPET_ROLE_NAME='role::puppet::puppetdb'
+      PUPPET_ROLE_ANSWERS='mom.master'
+      ;;
+    3)
+      # MoM console
+      SERVER_ROLE_NAME='MoM Puppet Console'
+      PUPPET_ROLE_NAME='role::puppet::console'
+      PUPPET_ROLE_ANSWERS='mom.console'
+      ;;
     4)
       # Tenant puppet master
       SERVER_ROLE_NAME='Tenant Puppet Master'
@@ -113,6 +139,49 @@ function apply_puppet_role() {
     --modulepath=${_script_dir}/../site:${_script_dir}/../modules:/opt/puppet/share/puppet/modules
 }
 
+function apply_puppet_role_local() {
+  echo "==> Applying Puppet role of ${PUPPET_ROLE_NAME}"
+  echo "==> CR dir: ${CONTROL_REPO_DIR}"
+
+  /opt/puppet/bin/puppet apply -e "include ${PUPPET_ROLE_NAME}" \
+    --modulepath=${CONTROL_REPO_DIR}/site:${CONTROL_REPO_DIR}/modules:/opt/puppet/share/puppet/modules
+}
+
+function install_git(){
+  # Make sure git isn't already installed
+  if [ ! -f "${GIT_INSTALL_DIR}/git" ]
+  then
+    yum install git
+  fi
+}
+
+function clone_infrastructure_control_repo(){
+  mkdir -p $CONTROL_REPO_ROOT
+  cd $CONTROL_REPO_ROOT
+
+  git clone  $CONTROL_REPO_URL
+}
+
+function install_r10k(){
+  # Install the r10k gem into the PE vendored ruby's gem environment.
+  # NOTE: We discourage this generally, but r10k only exists for Puppet
+  #       and we don't expect to have another ruby installed on PE infra. servers
+
+  R10K_INSTALLED=$("${PE_BIN_DIR}/gem" list r10k -i)
+
+  if [ $R10K_INSTALLED = 'false' ]
+  then
+    echo "==> Installing r10k"
+    "${PE_BIN_DIR}/gem" install r10k
+  fi
+}
+
+function install_control_repo_dependencies(){
+  # CD into the control repo directory and run r10k puppetfile install
+  cd $CONTROL_REPO_DIR
+    echo "==> Installing control repo dependencies from Puppetfile using r10k"
+  "${PE_BIN_DIR}/r10k" puppetfile install -v
+}
 
 ############################################################################
 # Functions in this block configure the various PE server roles
@@ -120,6 +189,15 @@ function apply_puppet_role() {
 
 function configure_puppet_server(){
   case $SERVER_ROLE in
+    1)
+      configure_mom_master
+      ;;
+    2)
+      echo "The MoM PuppetDB does not require reconfiguration in phase 1"
+      ;;
+    3)
+      echo "The MoM console does not require reconfiguration in phase 1"
+      ;;
     4)
       configure_tenant_master
       ;;
@@ -130,6 +208,35 @@ function configure_puppet_server(){
       configure_tenant_console
       ;;
   esac
+}
+
+function configure_mom_master(){
+  # Install git if necessary
+#  install_git
+
+  #Install r10k if necessary
+  install_r10k
+
+  # Pull down the control repo for initial reconfiguration
+  clone_infrastructure_control_repo
+
+  # Use r10k to install dependency modules for the control repo
+  install_control_repo_dependencies
+
+  # Run "puppet apply" to do the remaining local reconfiguration
+  apply_puppet_role_local
+  echo "==> Applied role ${PUPPET_ROLE_NAME}"
+
+  # Run r10k on the MoM master to pull down the correct control repos
+  # And configure the environment directories
+  /opt/puppet/bin/r10k deploy environment -p -v
+
+#  # Restart the pe-httpd process
+#  echo "==> Restarting pe-httpd to read new configs and certs."
+#  service pe-httpd restart
+
+#  echo
+#  echo "==> Reconfiguration of MoM master complete"
 }
 
 function configure_tenant_master(){
@@ -155,7 +262,8 @@ function configure_tenant_master(){
   puppet agent -t --server $(puppet config print ca_server)
 
   # Run r10k on the tenant master to pull down the correct control repos
-  /opt/puppet/bin/r10k deploy environment -p
+  echo "==> Creating environments with r10k"
+  /opt/puppet/bin/r10k deploy environment -p -v
 
   # Restart the pe-httpd process
   echo "==> Restarting pe-httpd to read new configs and certs."

@@ -16,7 +16,7 @@ nodes:
           path: provision/pe.sh
           arguments:
             - value: puppet-enterprise-3.3.1-el-6-x86_64.tar.gz
-            - value: split-master.answers.txt
+            - value: mom.master
   pe-mom-puppetdb:
     hostname: pe-puppetdb.example.vm
     box: centos-65-x64-virtualbox
@@ -32,7 +32,7 @@ nodes:
           path: provision/pe.sh
           arguments:
             - value: puppet-enterprise-3.3.1-el-6-x86_64.tar.gz
-            - value: split-puppetdb.answers.txt
+            - value: mom.puppetdb
   pe-mom-console:
     hostname: pe-console.example.vm
     box: centos-65-x64-virtualbox
@@ -48,7 +48,7 @@ nodes:
           path: provision/pe.sh
           arguments:
             - value: puppet-enterprise-3.3.1-el-6-x86_64.tar.gz
-            - value: split-console.answers.txt
+            - value: mom.console
   pe-tenant-master:
     hostname: pe-master.tenant.example.vm
     box: centos-65-x64-virtualbox

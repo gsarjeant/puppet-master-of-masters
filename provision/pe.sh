@@ -3,7 +3,7 @@
 
 # Input variables
 PE_INSTALLER_NAME=$1
-ANSWER_FILE_NAME=$2
+ANSWER_FILE=$2
 
 # Validation
 if [ "${PE_INSTALLER_NAME}x" == "x" ]
@@ -12,10 +12,12 @@ then
   exit 1
 fi
 
-if [ "${ANSWER_FILE_NAME}x" == "x" ]
+if [ "${ANSWER_FILE}x" == "x" ]
 then
   echo "Please specify the answer file name"
   exit 1
+else
+  ANSWER_FILE_NAME="${ANSWER_FILE}.txt"
 fi
 
 PE_BASEDIR='/vagrant'
@@ -38,10 +40,11 @@ tar -xvzf $PE_INSTALLER_SRC
 
 # Create the answer file directory and copy the answer file
 # NOTE: The answer file RPM will handle this
-ANSWERS_SRC="${PE_BASEDIR}/bootstrap/answers/${ANSWER_FILE_NAME}.txt"
+ANSWERS_SRC="${PE_BASEDIR}/bootstrap/answers/${ANSWER_FILE_NAME}"
 ANSWERS_DEST="${PE_INSTALLER_ANSWERS_ROOT}/${ANSWER_FILE_NAME}"
 mkdir -p $PE_INSTALLER_ANSWERS_ROOT
 cp $ANSWERS_SRC $ANSWERS_DEST
 
 # Install PE with the answer file
-"${PE_INSTALLER_DIR}/puppet-enterprise-installer" -a ${ANSWERS_DEST}
+# NOTE: Going to do this in the bootstrap now.
+#"${PE_INSTALLER_DIR}/puppet-enterprise-installer" -a ${ANSWERS_DEST}

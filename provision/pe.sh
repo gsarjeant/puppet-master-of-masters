@@ -25,10 +25,13 @@ PE_BASEDIR='/vagrant'
 # Mocking RPM installation of PE installer and answer files
 # vagrant location to pull PE tarball from (will be bundeled in RPM)
 PE_INSTALLER_SRC="${PE_BASEDIR}/${PE_INSTALLER_NAME}"
+
 # Directory to extract PE installer to (will be created by RPM)
 PE_INSTALLER_ROOT='/apps/pe-installer'
+
 # Directory to extract answer files to (will be created by RPM)
 PE_INSTALLER_ANSWERS_ROOT='/apps/pe-answers'
+
 # Directory that contains the PE installer after extraction
 PE_INSTALLER_DIR="${PE_INSTALLER_ROOT}/$(echo $PE_INSTALLER_NAME | sed -e 's/.tar.gz//')"
 

@@ -194,8 +194,7 @@ function install_control_repo_dependencies(){
 
 function clean_up_local_repo(){
   echo "==> Deleting local clone of infrastructure control repo"
-  echo $CONTROL_REPO_DIR
-  if [ $CONTROL_REPO_DIR == '' || $CONTROL_REPO_DIR == '/' ]
+  if [ $CONTROL_REPO_DIR == '' ] || [ $CONTROL_REPO_DIR == '/' ]
   then
     echo "Control repo dir not set - bail!"
   else 
@@ -273,7 +272,7 @@ function configure_tenant_master(){
   # remove the tenant ssldir
   PUPPET_AGENT_SSLDIR=$(puppet config print ssldir)
   echo "==> Removing ${PUPPET_AGENT_SSLDIR}"
-  if [ $PUPPET_AGENT_SSLDIR == '' || $PUPPET_AGENT_SSLDIR == '/' ]
+  if [ $PUPPET_AGENT_SSLDIR == '' ] || [ $PUPPET_AGENT_SSLDIR == '/' ]
   then
     echo "Puppet Agent SSL dir not set - bail!"
   else 

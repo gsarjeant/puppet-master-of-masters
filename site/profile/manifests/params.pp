@@ -120,9 +120,4 @@ class profile::params {
     },
   }
 
-  ## Mcollective
-  $pe_tenant_stomp_servers = [
-    $pe_tenant_master_fqdn,
-  ]
-
 }

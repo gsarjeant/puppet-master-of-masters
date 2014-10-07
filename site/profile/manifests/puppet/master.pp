@@ -40,13 +40,12 @@ class profile::puppet::master {
     activemq_brokers   => $profile::params::pe_activemq_brokers,
   }
 
-  ## Create site.pp from a static file
+  ## Create site.pp from a template
   ## We don't have a good way to inject the role inclusion otherwise
-  ## Set the stomp servers as a top-scope variable in site.pp
   file { "${::settings::confdir}/manifests/site.pp":
-    ensure => 'present',
-    source => 'puppet:///modules/profile/etc/puppetlabs/puppet/manifests/site.pp',
-    notify => Service[ 'pe-httpd' ],
+    ensure  => 'present',
+    content => template('profile/etc/puppetlabs/puppet/site.pp.erb'),
+    notify  => Service[ 'pe-httpd' ],
   }
 
   ## Configure r10k

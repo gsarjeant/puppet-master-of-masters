@@ -235,7 +235,7 @@ function configure_puppet_server(){
 
 function configure_mom_master(){
   # Install git if necessary
-#  install_git
+  install_git
 
   #Install r10k if necessary
   install_r10k
@@ -266,7 +266,20 @@ function configure_mom_master(){
 }
 
 function configure_tenant_master(){
-  apply_puppet_role
+  # Install git if necessary
+  install_git
+
+  #Install r10k if necessary
+  install_r10k
+
+  # Pull down the control repo for initial reconfiguration
+  clone_infrastructure_control_repo
+
+  # Use r10k to install dependency modules for the control repo
+  install_control_repo_dependencies
+
+  # Run "puppet apply" to do the remaining local reconfiguration
+  apply_puppet_role_local
   echo "==> Applied role ${PUPPET_ROLE_NAME}"
 
   # remove the tenant ssldir
@@ -305,8 +318,20 @@ function configure_tenant_master(){
 }
 
 function configure_tenant_puppetdb(){
-  # Apply the puppetdb role once to get everything pointing to the ca correctly
-  apply_puppet_role
+  # Install git if necessary
+  install_git
+
+  #Install r10k if necessary
+  install_r10k
+
+  # Pull down the control repo for initial reconfiguration
+  clone_infrastructure_control_repo
+
+  # Use r10k to install dependency modules for the control repo
+  install_control_repo_dependencies
+
+  # Run "puppet apply" to do the remaining local reconfiguration
+  apply_puppet_role_local
 
   # Remove the agent and PuppetDB SSL data
   # so we can generate a new cert from the global CA

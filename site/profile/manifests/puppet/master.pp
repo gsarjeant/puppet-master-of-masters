@@ -46,7 +46,7 @@ class profile::puppet::master {
   ## We don't have a good way to inject the role inclusion otherwise
   file { "${::settings::confdir}/manifests/site.pp":
     ensure  => 'present',
-    content => template('profile/etc/puppetlabs/puppet/site.pp.erb'),
+    content => template('profile/etc/puppetlabs/puppet/manifests/site.pp.erb'),
     notify  => Service[ 'pe-httpd' ],
   }
 

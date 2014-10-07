@@ -346,7 +346,7 @@ function configure_tenant_puppetdb(){
   # Apply the puppetdb role a second time to recreate the internal certs.
   # There will be an error here when we attempt to submit the report.
   # It will go away when pe-puppetdb is restarted
-  apply_puppet_role
+  apply_puppet_role_local
 
   echo "==> Restarting the pe-puppetdb service"
   service pe-puppetdb restart
@@ -356,7 +356,20 @@ function configure_tenant_puppetdb(){
 }
 
 function configure_tenant_console(){
-  apply_puppet_role
+  # Install git if necessary
+  install_git
+
+  #Install r10k if necessary
+  install_r10k
+
+  # Pull down the control repo for initial reconfiguration
+  clone_infrastructure_control_repo
+
+  # Use r10k to install dependency modules for the control repo
+  install_control_repo_dependencies
+
+  # Run "puppet apply" to do the remaining local reconfiguration
+  apply_puppet_role_local
 
   echo "==> Removing SSL data"
   rm -rf /etc/puppetlabs/puppet/ssl

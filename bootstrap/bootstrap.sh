@@ -40,12 +40,13 @@ confirm_install
 if ! has_pe; then
   echo "PE not found. Installing"
   install_pe
+  echo "PE has been installed. Please rerun the bootstrap after PE is installed on the other components to proceed with reconfiguration."
 else
   echo "PE is installed. Proceeding with reconfiguration."
+  # Configure the selected role appropriately
+  #   - Reconfigure tenants to use MoM CA as CA
+  #   - Remove tenant SSL dirs
+  #   - Regenerate tenant SSL certs
+  configure_puppet_server
 fi
 
-# Configure the selected role appropriately
-#   - Reconfigure tenants to use MoM CA as CA
-#   - Remove tenant SSL dirs
-#   - Regenerate tenant SSL certs
-configure_puppet_server

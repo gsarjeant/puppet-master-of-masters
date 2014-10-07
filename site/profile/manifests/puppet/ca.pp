@@ -19,9 +19,9 @@ class profile::puppet::ca {
     $profile::params::pe_console_certname,
     $profile::params::pe_mom_puppetdb_fqdn,
     $profile::params::pe_mom_console_fqdn,
-    $profile::paras::pe_tenant_master_fqdn,
-    $profile::paras::pe_tenant_puppetdb_fqdn,
-    $profile::paras::pe_tenant_console_fqdn
+    $profile::params::pe_tenant_master_fqdn,
+    $profile::params::pe_tenant_puppetdb_fqdn,
+    $profile::params::pe_tenant_console_fqdn
   ]
 
   class { 'pe_server::ca':

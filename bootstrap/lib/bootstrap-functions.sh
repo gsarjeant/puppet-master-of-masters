@@ -69,7 +69,7 @@ function set_role_params(){
       # MoM puppetdb
       SERVER_ROLE_NAME='MoM PuppetDB'
       PUPPET_ROLE_NAME='role::puppet::puppetdb'
-      PUPPET_ROLE_ANSWERS='mom.master'
+      PUPPET_ROLE_ANSWERS='mom.puppetdb'
       ;;
     3)
       # MoM console
@@ -87,7 +87,7 @@ function set_role_params(){
       # Tenant puppetdb
       SERVER_ROLE_NAME='Tenant PuppetDB'
       PUPPET_ROLE_NAME='role::puppet::tenant::puppetdb'
-      PUPPET_ROLE_ANSWERS='tenant.master'
+      PUPPET_ROLE_ANSWERS='tenant.puppetdb'
       ;;
     6)
       # Tenant console

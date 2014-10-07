@@ -46,4 +46,6 @@ node default {
     include $::server_role
   }
 }
-$fact_stomp_server = 'pe-master.example.vm'
+<% if @stomp_servers -%>  
+$fact_stomp_server = <%= @stomp_servers -%>
+<% end -%>

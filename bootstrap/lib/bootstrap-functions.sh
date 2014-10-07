@@ -6,14 +6,16 @@
 
 PE_VERSION='3.3.1'
 PE_BIN_DIR='/opt/puppet/bin'
-# NOTE: This will be created by the PE installer rpm
-PE_INSTALLER_PATH='/apps/pe-installer/puppet-enterprise-${PE_VERSION}-el-6-x86_64'
-ANSWER_PATH='answers'
+
+# NOTE: These two directories will be created by the PE installer rpms
+INSTALL_BASE_DIR='/apps'
+PE_INSTALLER_PATH="/${INSTALL_BASE_DIR}/pe-installer/puppet-enterprise-${PE_VERSION}-el-6-x86_64"
+PE_INSTALLER_ANSWER_PATH="/${INSTALL_BASE_DIR}/pe-answers"
+
 GIT_INSTALL_DIR='/usr/example/bin'
+
 CONTROL_REPO_NAME='puppet-master-of-masters'
 CONTROL_REPO_URL="https://github.com/gsarjeant/${CONTROL_REPO_NAME}.git"
-
-INSTALL_BASE_DIR='/apps'
 CONTROL_REPO_SUBDIR='control_repo'
 CONTROL_REPO_ROOT="${INSTALL_BASE_DIR}/${CONTROL_REPO_SUBDIR}"
 CONTROL_REPO_DIR="${CONTROL_REPO_ROOT}/${CONTROL_REPO_NAME}"
@@ -102,18 +104,21 @@ function set_role_params(){
 }
 
 function install_pe() {
-  if [ ! -d "${INSTALL_PATH}" ]; then
-    echo "Failure: PE Installer not found at ${INSTALL_PATH}"
+  PE_INSTALLER_ANSWER_FILE="${PE_INSTALLER_ANSWER_PATH}/${PUPPET_ROLE_ANSWERS}.txt"
+  PE_INSTALLER_FILE="${PE_INSTALLER_PATH}/puppet-enterprise-installer"
+
+  if [ ! -d "${PE_INSTALLER_PATH}" ]; then
+    echo "Failure: PE Installer not found at ${PE_INSTALLER_PATH}"
     exit 1
   fi
 
-  if [ ! -f "${ANSWER_PATH}/${PUPPET_ROLE_ANSWERS}.txt" ]; then
-    echo "Failure: Answer file not found: ${ANSWER_PATH}/${PUPPET_ROLE_ANSWERS}.txt"
+  if [ ! -f "${PE_INSTALLER_ANSWER_FILE}" ]; then
+    echo "Failure: Answer file not found: ${PE_INSTALLER_ANSWER_FILE}"
     exit 1
   fi
 
-  "${INSTALL_PATH}/puppet-enterprise-installer" \
-    -a "${ANSWER_PATH}/${PUPPET_ROLE_ANSWERS}.txt" \
+  "${PE_INSTALLER_FILE}" \
+    -a "${PE_INSTALLER_ANSWER_FILE}" \
     -l "/tmp/pe_install.$(hostname -f).$(date +%Y-%m-%d_%H-%M).log"
 
   if [ $? -eq 0 ]; then
@@ -137,12 +142,6 @@ function has_pe() {
   else
     return 1
   fi
-}
-
-function apply_puppet_role() {
-  echo "==> Applying Puppet role of ${PUPPET_ROLE_NAME}"
-  /opt/puppet/bin/puppet apply -e "include ${PUPPET_ROLE_NAME}" \
-    --modulepath=${_script_dir}/../site:${_script_dir}/../modules:/opt/puppet/share/puppet/modules
 }
 
 function apply_puppet_role_local() {

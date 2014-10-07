@@ -117,13 +117,13 @@ function install_pe() {
     exit 1
   fi
 
-  "${PE_INSTALLER_FILE}" \
-    -a "${PE_INSTALLER_ANSWER_FILE}" \
-    -l "/tmp/pe_install.$(hostname -f).$(date +%Y-%m-%d_%H-%M).log"
+  # Run the PE installer with the appropriate answer file
+  echo "Running PE installer ..."
+  echo "${PE_INSTALLER_FILE} -a ${PE_INSTALLER_ANSWER_FILE} -l /tmp/pe_install.$(hostname -f).$(date +%Y-%m-%d_%H-%M).log"
+  ${PE_INSTALLER_FILE} -a ${PE_INSTALLER_ANSWER_FILE} -l "/tmp/pe_install.$(hostname -f).$(date +%Y-%m-%d_%H-%M).log"
 
   if [ $? -eq 0 ]; then
     echo "==> Puppet Enterprise Installer is complete"
-    echo "==> Now starting the bootstrap..."
     echo
   else
     echo "==> The PE installer did not exit cleanly (0)"

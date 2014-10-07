@@ -10,7 +10,9 @@ class profile::puppet::master {
   }
 
   ## Mcollective servers
-  $stomp_servers = join($profile::params::pe_tenant_stomp_servers, ',')
+  if $::profile::params::pe_tenant_stomp_servers {
+    $stomp_servers = join($::profile::params::pe_tenant_stomp_servers, ',')
+  }
 
   ## Manage various architecture settings, such as CA settings
   class { 'pe_server':

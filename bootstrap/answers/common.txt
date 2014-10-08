@@ -9,54 +9,20 @@
 ## The domain name to use for the hosts' fqdn
 DOMAIN="example.vm"
 
-## The generic name that points to active Puppet Master(s)
-PUPPETMASTER="puppetmaster"
+## The master-of-masters Puppet master and global CA
+MOM_MASTER="pe-master.${DOMAIN}"
 
-## The generic name that points to an active CA
-PUPPETCA="puppetca"
+## The master-of-masters PuppetDB server
+MOM_PUPPETDB="pe-puppetdb.${DOMAIN}"
 
-## The name that points to the primary CA
-PUPPETCA01="puppetca01"
+## The master-of-masters console
+MOM_CONSOLE="pe-console.${DOMAIN}"
 
-## The name that points to the secondary CA
-PUPPETCA02="puppetca02"
+## The tenant Puppet master
+TENANT_MASTER="pe-master.tenant.${DOMAIN}"
 
-## The generic name that points to an active PuppetDB instance
-PUPPETDB="puppetdb"
+## The tenant PuppetDB server
+TENANT_PUPPETDB="pe-puppetdb.tenant.${DOMAIN}"
 
-## The name that points to the primary PuppetDB instance
-PUPPETDB01="puppetdb01"
-
-## The name that points to the secondary PuppetDB instance
-PUPPETDB02="puppetdb02"
-
-## The generic name that points to an active PostgreSQL instance for PuppetDB
-PUPPETDBPG="puppetdbpg"
-
-## The generic name that points to an active console
-PUPPETCONSOLE="puppetconsole"
-
-## The name that points to the primary console
-PUPPETCONSOLE01="puppetconsole01"
-
-## The name that points to the secondary console
-PUPPETCONSOLE02="puppetconsole02"
-
-## The generic name that points to an active PostgreSQL instance for the console
-PUPPETCONSOLEPG="puppetconsolepg"
-
-## Password for the PostgreSQL 'root' user
-q_database_root_password=hunter2
-
-## Password for the 'console_auth' PostgreSQL database
-q_puppet_enterpriseconsole_auth_database_password=hunter2
-
-## Password for the 'console' PostgreSQL database
-q_puppet_enterpriseconsole_database_password=hunter2
-
-## Password for the 'puppetdb' PostgreSQL database
-q_puppetdb_database_password=hunter2
-
-## Credentials for the Puppet Enterprise Console web interface
-q_puppet_enterpriseconsole_auth_user_email=admin@example.com
-q_puppet_enterpriseconsole_auth_password=hunter2
+## The tenant console
+TENANT_CONSOLE="pe-console.tenant.${DOMAIN}"

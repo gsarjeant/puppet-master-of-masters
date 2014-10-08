@@ -49,3 +49,6 @@ node default {
 <% if @stomp_servers -%>  
 $fact_stomp_server = <%= @stomp_servers -%>
 <% end -%>
+
+# Set allow_virtual to false for all packages to suppress the PE 3.3.x deprecation warning
+Package { allow_virtual => false }

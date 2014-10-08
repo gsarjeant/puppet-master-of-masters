@@ -93,7 +93,7 @@ function set_role_params(){
       # Tenant console
       SERVER_ROLE_NAME='Tenant PE Console'
       PUPPET_ROLE_NAME='role::puppet::tenant::console'
-      PUPPET_ROLE_ANSWERS='tenant.master'
+      PUPPET_ROLE_ANSWERS='tenant.console'
       ;;
     *)
       # Default: unknown role - exit

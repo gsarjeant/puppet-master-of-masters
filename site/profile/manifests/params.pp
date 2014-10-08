@@ -7,8 +7,7 @@ class profile::params {
   $pe_mom_ca_hostname                 = 'pe-master'
   $pe_mom_domain                      = 'example.vm'
   $pe_mom_ca_fqdn                     = "${pe_mom_ca_hostname}.${pe_mom_domain}"
-
-  $pe_tenant_domain                   = $::domain
+  $pe_tenant_domain                   = 'tenant.example.vm'
 
   $pe_activemq_brokers = [
     $pe_mom_ca_fqdn,

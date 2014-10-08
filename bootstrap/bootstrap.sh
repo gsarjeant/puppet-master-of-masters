@@ -9,11 +9,6 @@
 # lib/bootstrap-functions.sh defines all of the functions invoked below,
 # and any other functions upon which they rely.
 source lib/bootstrap-functions.sh
-## This file includes the hostnames that we need.
-## Probably won't use this in my config, but leaving the line here for a bit.
-#source answers/common.txt
-
-_script_dir=$PWD
 
 ################################################################################
 ## Probably don't need to modify below this
@@ -39,7 +34,9 @@ confirm_install
 # Install PE if necessary
 if ! has_pe; then
   echo "PE not found. Installing"
-  install_pe
+  PE_INSTALLER_ANSWER_FILE="${PE_INSTALLER_ANSWER_PATH}/${PUPPET_ROLE_ANSWERS}.txt"
+  PE_INSTALLER_FILE="${PE_INSTALLER_PATH}/puppet-enterprise-installer"
+  ${PE_INSTALLER_FILE} -a ${PE_INSTALLER_ANSWER_FILE} -l "/tmp/pe_install.$(hostname -f).$(date +%Y-%m-%d_%H-%M).log"
   echo "PE has been installed. Please rerun the bootstrap after PE is installed on the other components to proceed with reconfiguration."
 else
   echo "PE is installed. Proceeding with reconfiguration."

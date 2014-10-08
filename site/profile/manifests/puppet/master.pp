@@ -36,11 +36,11 @@ class profile::puppet::master {
 
   ## Configure Mcollective 
   ## we want to share credentials and provide multiple brokers
-#  class { 'pe_server::mcollective':
-#    primary            => $profile::params::pe_mom_ca_fqdn,
-#    shared_credentials => true,
-#    activemq_brokers   => $profile::params::pe_activemq_brokers,
-#  }
+  class { 'pe_server::mcollective':
+    primary            => $profile::params::pe_mom_ca_fqdn,
+    shared_credentials => true,
+    activemq_brokers   => $profile::params::pe_activemq_brokers,
+  }
 
   ## Create site.pp from a template
   ## We don't have a good way to inject the role inclusion otherwise

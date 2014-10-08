@@ -9,8 +9,8 @@ PE_BIN_DIR='/opt/puppet/bin'
 
 # NOTE: These two directories will be created by the PE installer rpms
 INSTALL_BASE_DIR='/apps'
-PE_INSTALLER_PATH="/${INSTALL_BASE_DIR}/pe-installer/puppet-enterprise-${PE_VERSION}-el-6-x86_64"
-PE_INSTALLER_ANSWER_PATH="/${INSTALL_BASE_DIR}/pe-answers"
+PE_INSTALLER_PATH="${INSTALL_BASE_DIR}/pe-installer/puppet-enterprise-${PE_VERSION}-el-6-x86_64"
+PE_INSTALLER_ANSWER_PATH="${INSTALL_BASE_DIR}/pe-answers"
 
 GIT_INSTALL_DIR='/usr/example/bin'
 

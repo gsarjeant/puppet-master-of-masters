@@ -34,9 +34,7 @@ confirm_install
 # Install PE if necessary
 if ! has_pe; then
   echo "PE not found. Installing"
-  PE_INSTALLER_ANSWER_FILE="${PE_INSTALLER_ANSWER_PATH}/${PUPPET_ROLE_ANSWERS}.txt"
-  PE_INSTALLER_FILE="${PE_INSTALLER_PATH}/puppet-enterprise-installer"
-  ${PE_INSTALLER_FILE} -a ${PE_INSTALLER_ANSWER_FILE} -l "/tmp/pe_install.$(hostname -f).$(date +%Y-%m-%d_%H-%M).log"
+  install_pe
   echo "PE has been installed. Please rerun the bootstrap after PE is installed on the other components to proceed with reconfiguration."
 else
   echo "PE is installed. Proceeding with reconfiguration."

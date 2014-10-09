@@ -5,17 +5,16 @@ class profile::puppet::agent {
   ## Use the pe_server module to manage some common Puppet settings
   class { 'pe_server':
     is_master                    => false,
-    ca_server                    => $profile::params::pe_puppetca_fqdn,
+    ca_server                    => $profile::params::pe_mom_ca_fqdn,
     change_filebucket            => true,
-    filebucket_server            => $profile::params::pe_puppetmaster_fqdn,
+    filebucket_server            => $profile::params::pe_tenant_master_fqdn,
     export_puppetdb_whitelist    => false,
     export_console_authorization => false,
   }
 
-  ## Ensure the "server" points to our generic CNAME
-  augeas { 'puppet.conf_server':
+  augeas { 'puppet.conf_agent_environment':
     context => '/files/etc/puppetlabs/puppet/puppet.conf',
-    changes => "set main/server ${profiles::params::pe_puppetmaster_fqdn}",
+    changes => "set agent/environment ${::agent_environment}",
   }
 
 }

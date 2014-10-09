@@ -97,3 +97,19 @@ nodes:
           arguments:
             - value: puppet-enterprise-3.3.1-el-6-x86_64.tar.gz
             - value: tenant.console
+  pe-tenant-agent:
+    hostname: pe-agent.tenant.example.vm
+    box: centos-65-x64-virtualbox
+    memory: 1024
+    cpus: 1
+    networks:
+      - private_network:
+          ip: 192.168.141.106
+    provisioners:
+      - shell:
+          path: provision/hosts.sh
+      - shell:
+          path: provision/pe.sh
+          arguments:
+            - value: puppet-enterprise-3.3.1-el-6-x86_64.tar.gz
+            - value: tenant.console

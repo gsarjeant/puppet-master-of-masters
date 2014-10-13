@@ -73,7 +73,7 @@ class profile::puppet::master {
     mcollective       => true,
     notify            => Service['pe-httpd'],
   }
-  
+
   class { 'r10k::webhook':
     require => Class[ 'r10k' ],
   }

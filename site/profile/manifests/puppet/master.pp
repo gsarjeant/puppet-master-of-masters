@@ -14,8 +14,8 @@ class profile::puppet::master {
 
   ## File ownership defaults
   File {
-    owner => $::profile::params::pe_master_owner
-    group => $::profile::params::pe_master_group
+    owner => $::profile::params::pe_master_owner,
+    group => $::profile::params::pe_master_group,
   }
 
   ## Mcollective servers

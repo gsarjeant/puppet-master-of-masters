@@ -65,7 +65,7 @@ class profile::params {
     "${::clientcert}"       => {
       'role'                => 'read-write'
     },
-    "${pe_momca_fqdn}"      => {
+    "${pe_mom_ca_fqdn}"     => {
       'role'                => 'read-write'
     },
   }

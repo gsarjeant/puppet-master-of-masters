@@ -1,3 +1,12 @@
+# Class: profile::puppet::master
+#
+# Much of this would be documented in greater detail in the README of the git repo.
+# DESCRIPTION: Some description here
+#
+# PARAMETERS: List of params and their purposes, expected values, etc
+#
+# NOTES:
+# USAGE:
 class profile::puppet::master {
 
   ## Global variables for PE configuration
@@ -25,16 +34,16 @@ class profile::puppet::master {
   # We'll need to manage the console's internal certs from here. Make sure the directories exist.
   file { $::profile::params::pe_console_share_dir:
     ensure => directory,
-    mode  => '0755',
+    mode   => '0755',
   }
 
   file { $::profile::params::pe_console_internal_cert_dir:
     ensure => directory,
-    owner => $::profile::params::pe_master_owner,
-    group => $::profile::params::pe_master_group,
+    owner  => $::profile::params::pe_master_owner,
+    group  => $::profile::params::pe_master_group,
   }
 
-  ## Configure Mcollective 
+  ## Configure Mcollective
   ## we want to share credentials and provide multiple brokers
   class { 'pe_server::mcollective':
     primary            => $profile::params::pe_mom_ca_fqdn,
@@ -52,7 +61,7 @@ class profile::puppet::master {
 
   ## Configure r10k
   class { 'r10k':
-    sources       => {
+    sources           => {
       'infra'   => {
         'remote'  => $profile::params::control_repo_address,
         'basedir' => "${::settings::confdir}/environments",
@@ -84,7 +93,7 @@ class profile::puppet::master {
 
   ## Configure Puppet's environment path - where can it find environments
   ini_setting { 'environmentpath':
-    ensure => 'present',
+    ensure  => 'present',
     path    => "${::settings::confdir}/puppet.conf",
     section => 'main',
     setting => 'environmentpath',

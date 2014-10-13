@@ -62,4 +62,6 @@ class profile::puppet::console {
   service { 'pe-httpd':
     ensure => 'running',
   }
+
+  class { 'r10k-mcollective': }
 }

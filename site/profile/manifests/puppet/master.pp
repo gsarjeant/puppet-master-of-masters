@@ -70,8 +70,12 @@ class profile::puppet::master {
     },
     purgedirs         => [ "${::settings::confdir}/environments" ],
     manage_modulepath => false,
-    mcollective       => false,
+    mcollective       => true,
     notify            => Service['pe-httpd'],
+  }
+
+  class { 'r10k::webhook':
+    require => Class[ 'r10k' ],
   }
 
   ## Ensure an environments directory exists

@@ -15,7 +15,7 @@ mod 'pe_server',
 
 mod 'puppet_certificate',
   :git => 'https://github.com/reidmv/puppet-module-puppet_certificate.git',
-  :ref => '0.0.3'
+  :ref => '0.0.2'
 
 ###############################################################################
 # General dependencies

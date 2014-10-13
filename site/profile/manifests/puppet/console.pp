@@ -63,5 +63,5 @@ class profile::puppet::console {
     ensure => 'running',
   }
 
-  class { 'r10k-mcollective': }
+  class { 'r10k::mcollective': }
 }

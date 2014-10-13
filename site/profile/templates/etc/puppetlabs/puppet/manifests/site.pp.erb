@@ -46,6 +46,7 @@ node default {
     include $::server_role
   }
 }
+# comment
 <% if @stomp_servers -%>  
 $fact_stomp_server = <%= @stomp_servers -%>
 <% end -%>

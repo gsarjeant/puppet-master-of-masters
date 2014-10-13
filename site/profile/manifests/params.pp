@@ -2,7 +2,6 @@ class profile::params {
   #############################################################################
   ## Global
   #############################################################################
-  # Just adding a comment to trigger a hook
   $pe_console_certname                = 'pe-internal-dashboard'
 
   $pe_mom_ca_hostname                 = 'pe-master'

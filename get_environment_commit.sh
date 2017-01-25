@@ -1,6 +1,6 @@
 #! /bin/sh
  
-if (( $# != 1 )); then
+if [ $# -eq 1 ]; then
   echo "Call this script with the name of the environment"
   echo "Example: ${0} production"
   exit 1
